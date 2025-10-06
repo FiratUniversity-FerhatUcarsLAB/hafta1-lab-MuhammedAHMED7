@@ -1,4 +1,112 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250541604
+AD-SOYAD:Muhammed AHMED
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+ALGORITMA IdealKahveDemleme
+
+BAŞLA
+
+    // 1. Girdi Verilerini Al
+    GİRİŞ:
+        kahve_turu         ← kullanıcıdan al
+        menşei              ← kullanıcıdan al
+        demleme_yontemi     ← kullanıcıdan al
+        tat_tercihi         ← kullanıcıdan al
+        kahve_miktari (g)   ← kullanıcıdan al
+        su_kalitesi (ppm)   ← kullanıcıdan al
+        ortam_sicakligi (°C)← kullanıcıdan al
+        ogutme_tazeligi (saat) ← kullanıcıdan al
+
+    // 2. Kahve Türüne Göre Özellikleri Belirle
+    EĞER kahve_turu = "Arabica" İSE
+        aroma ← yüksek
+        asidite ← orta-yüksek
+    DEĞİLSE EĞER kahve_turu = "Robusta" İSE
+        aroma ← düşük
+        gövde ← yoğun
+        kafein ← yüksek
+    SON
+
+    // 3. Demleme Yöntemine Göre Varsayılan Parametreleri Ayarla
+    SEÇ (demleme_yontemi)
+        DURUM "Espresso":
+            ogutme_inceligi ← ince
+            su_sicakligi ← 93
+            oran ← 1:2
+            sure ← 30
+        DURUM "Pour-over":
+            ogutme_inceligi ← orta-ince
+            su_sicakligi ← 94
+            oran ← 1:16
+            sure ← 180
+        DURUM "French Press":
+            ogutme_inceligi ← kalın
+            su_sicakligi ← 92
+            oran ← 1:14
+            sure ← 240
+        DURUM "Cold Brew":
+            ogutme_inceligi ← çok kalın
+            su_sicakligi ← 6
+            oran ← 1:5
+            sure ← 21600
+        DURUM DİĞER:
+            ogutme_inceligi ← orta
+            su_sicakligi ← 92
+            oran ← 1:15
+            sure ← 180
+    SON SEÇ
+
+    // 4. Tat Tercihine Göre Ayarlama
+    EĞER tat_tercihi = "Yumuşak" İSE
+        su_sicakligi ← su_sicakligi - 2
+        sure ← sure * 0.85
+    DEĞİLSE EĞER tat_tercihi = "Sert" İSE
+        su_sicakligi ← su_sicakligi + 2
+        sure ← sure * 1.15
+    DEĞİLSE
+        (değişiklik yapma)
+    SON
+
+    // 5. Hazırlık Aşaması
+    SUYU_FILTRELE(su_kalitesi)
+    KAHVEYİ_TAZE_OGUT(ogutme_inceligi)
+    EKİPMANI_ISIT(demleme_yontemi)
+    SUYU_ISIT(su_sicakligi)
+
+    // 6. Demleme Süreci
+    DEMLEME_BAŞLAT:
+        kahveyi demleme aracına ekle
+        suyu yavaşça ve dairesel biçimde dök
+        zamanlayıcıyı başlat
+        bekle (sure)
+        demleme tamamlanınca süz
+    SON DEMLEME
+
+    // 7. Tat Değerlendirmesi
+    TAT_DEGERLENDIR:
+        aroma, asidite, gövde, dengeyi değerlendir
+        tat_skoru ← ortalama_deger(1–5)
+    SON
+
+    // 8. Geri Bildirim Döngüsü
+    EĞER tat_skoru < 3 İSE
+        su_sicakligi ← su_sicakligi + 1
+        oran ← oran - 0.5
+        sure ← sure + 10
+        DURUM ← “Tat zayıf veya dengesiz — parametreler artırıldı.”
+    DEĞİLSE EĞER tat_skoru > 4.5 İSE
+        DURUM ← “Mükemmel sonuç! Ayarlar optimum.”
+    DEĞİLSE
+        DURUM ← “Tat dengeli — küçük ayarlamalar gerekebilir.”
+    SON
+
+    // 9. Sonuçları Kaydet
+    YAZDIR:
+        “Su sıcaklığı:” su_sicakligi
+        “Oran (K:S):” oran
+        “Süre (sn):” sure
+        “Tat skoru:” tat_skoru
+        “Durum:” DURUM
+
+BİTİR
+
