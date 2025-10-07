@@ -1,4 +1,93 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250541604
+AD-SOYAD:Muhammed AHMED
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+ALGORITMA Stratejik_Sudoku_Cozme
+
+    # --- 1. Başlangıç ve Tanımlar ---
+    TAHTA[9][9]          # Sudoku tahtası
+    BOS_HUCELER ← Listele_Bos_Hucreler(TAHTA)
+    ADIM ← 0
+    MAX_ADIM ← 500
+    BASARI ← FALSE
+
+    # Rakip hamlesi benzetimi (örneğin: yanlış yerleştirme, tuzak, zorluk seviyesi)
+    RAKIP_HAREKETI ← Rastgele_Hamle_Degeri()    # 0–100 arası olasılık
+    ZORLUK_SEVIYESI ← 70                        # 0–100 arası: yüksek → daha az olasılık
+
+    # --- 2. Ana Döngü ---
+    WHILE (BASARI = FALSE) AND (ADIM < MAX_ADIM) DO
+
+        ADIM ← ADIM + 1
+        YAZ("Adım " + ADIM + " başlatıldı...")
+
+        # --- 3. En Mantıklı Hücreyi Seç ---
+        EN_IYI_HUCRE ← null
+        MIN_OLASILIK ← 10
+        FOR HER HUCRE in BOS_HUCELER DO
+            OLASILIKLAR ← Mümkün_Sayılar(TAHTA, HUCRE)
+            IF UZUNLUK(OLASILIKLAR) < MIN_OLASILIK THEN
+                MIN_OLASILIK ← UZUNLUK(OLASILIKLAR)
+                EN_IYI_HUCRE ← HUCRE
+            ENDIF
+        ENDFOR
+
+        IF (EN_IYI_HUCRE = null) THEN
+            YAZ("Hiç olasılık kalmadı! Geriye dönülüyor.")
+            Geri_Adim_At(TAHTA)
+            CONTINUE
+        ENDIF
+
+        # --- 4. O Hücre İçin En Uygun Sayıyı Belirle ---
+        ADAYLAR ← Mümkün_Sayılar(TAHTA, EN_IYI_HUCRE)
+        YAZ("Seçilen hücre için aday sayılar: " + ADAYLAR)
+
+        EN_IYI_SKOR ← -∞
+        SECILEN_SAYI ← null
+
+        FOR HER SAYI in ADAYLAR DO
+            # --- 5. Karar Verme Mantığı ---
+            HAMLE_SKOR ← Degerlendir_Hamle(TAHTA, EN_IYI_HUCRE, SAYI)
+
+            # Rakip hamle olasılığını simüle et
+            RAKIP_ETKISI ← Tahmin_Et_Rakip_Hamlesi(ZORLUK_SEVIYESI)
+            HAMLE_SKOR ← HAMLE_SKOR - RAKIP_ETKISI
+
+            IF (HAMLE_SKOR > EN_IYI_SKOR) THEN
+                EN_IYI_SKOR ← HAMLE_SKOR
+                SECILEN_SAYI ← SAYI
+            ENDIF
+        ENDFOR
+
+        # --- 6. En iyi hamleyi uygula ---
+        YAZ("Seçilen sayı: " + SECILEN_SAYI)
+        TAHTA[EN_IYI_HUCRE] ← SECILEN_SAYI
+        BOS_HUCELER ← Listele_Bos_Hucreler(TAHTA)
+
+        # --- 7. Rakip Hamlesi Benzetimi ---
+        # Örneğin: rakip yanlış bilgi ekleyebilir, olasılık azaltabilir
+        RAKIP_HAREKETI ← Rastgele_Hamle_Degeri()
+        IF (RAKIP_HAREKETI > 90) THEN
+            YAZ("⚠ Rakip hamlesi: mantıksal tuzak oluşturdu!")
+            Bir_Hücrede_Kısıtlama_Artır(TAHTA)
+        ELSE IF (RAKIP_HAREKETI < 10) THEN
+            YAZ("🎯 Rakip hata yaptı, ek bilgi açığa çıktı!")
+            Ipucu_Ekle(TAHTA)
+        ENDIF
+
+        # --- 8. Sudoku tamamlandı mı kontrolü ---
+        IF (Sudoku_Tamamlandi_Mi(TAHTA)) THEN
+            BASARI ← TRUE
+        ENDIF
+
+    ENDWHILE
+
+    # --- 9. Sonuç ---
+    IF (BASARI = TRUE) THEN
+        YAZ("✅ Sudoku başarıyla çözüldü! Adım sayısı: " + ADIM)
+    ELSE
+        YAZ("❌ Maksimum adım sayısına ulaşıldı, çözüm bulunamadı.")
+    ENDIF
+
+SON
+
