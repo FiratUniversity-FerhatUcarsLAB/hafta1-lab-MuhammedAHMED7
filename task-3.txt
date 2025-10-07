@@ -1,4 +1,119 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250541604
+AD-SOYAD:Muhammed AHMED
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+ALGORITMA Kutuphane_Kitap_Arama_Sistemi
+
+    # --- 1. Başlangıç ve Tanımlar ---
+    KITAPLAR ← []                 # Kitap listesi (nesneler veya kayıtlar)
+    N ← 0                         # Kitap sayısı
+    BULUNDU ← FALSE
+    ARAMA_TURU ← ""               # (Başlık, Yazar, ISBN vs.)
+    ARAMA_KRITERI ← ""
+
+    # Kitap veri yapısı örneği
+    # KITAP = {ISBN, Baslik, Yazar, Tur, Yil, RafNo}
+
+    # --- 2. Veri Girişi (örnek kayıtlar) ---
+    YAZ("Kütüphane sistemine hoş geldiniz.")
+    KITAPLAR ← Kitap_Verilerini_Yukle()
+    N ← UZUNLUK(KITAPLAR)
+    YAZ("Toplam " + N + " kitap sisteme yüklendi.")
+
+    # --- 3. Veri Sıralama ---
+    # Kullanıcıya sıralama türünü sor
+    YAZ("Kitapları hangi kritere göre sıralamak istersiniz?")
+    YAZ("1. Başlığa göre   2. Yazara göre   3. Yayın yılına göre")
+    SECIM ← Girdi_Al()
+
+    IF SECIM = 1 THEN
+        KITAPLAR ← Sırala(KITAPLAR, "Baslik")        # Örn: BubbleSort, QuickSort, vb.
+    ELSE IF SECIM = 2 THEN
+        KITAPLAR ← Sırala(KITAPLAR, "Yazar")
+    ELSE IF SECIM = 3 THEN
+        KITAPLAR ← Sırala(KITAPLAR, "Yil")
+    ELSE
+        YAZ("Geçersiz seçim! Varsayılan olarak başlığa göre sıralanıyor.")
+        KITAPLAR ← Sırala(KITAPLAR, "Baslik")
+    ENDIF
+
+    YAZ("Kitaplar başarıyla sıralandı!")
+
+    # --- 4. Kullanıcıdan Arama Bilgisi Al ---
+    YAZ("Aramak istediğiniz kriteri seçin:")
+    YAZ("1. Başlığa göre   2. Yazara göre   3. ISBN'e göre")
+    SECIM ← Girdi_Al()
+
+    IF SECIM = 1 THEN
+        ARAMA_TURU ← "Baslik"
+    ELSE IF SECIM = 2 THEN
+        ARAMA_TURU ← "Yazar"
+    ELSE IF SECIM = 3 THEN
+        ARAMA_TURU ← "ISBN"
+    ELSE
+        YAZ("Geçersiz seçim, başlığa göre arama yapılacak.")
+        ARAMA_TURU ← "Baslik"
+    ENDIF
+
+    YAZ("Aramak istediğiniz " + ARAMA_TURU + " bilgisini giriniz:")
+    ARAMA_KRITERI ← Girdi_Al()
+
+    # --- 5. Arama İşlemi (Binary Search + Linear fallback) ---
+    YAZ("Kitap aranıyor...")
+
+    BULUNDU ← FALSE
+    SONUC ← null
+
+    # Eğer liste sıralıysa ikili arama uygula
+    IF (ARAMA_TURU = "Baslik") OR (ARAMA_TURU = "Yazar") THEN
+        SONUC ← Ikili_Arama(KITAPLAR, ARAMA_TURU, ARAMA_KRITERI)
+    ELSE
+        SONUC ← Dogrusal_Arama(KITAPLAR, ARAMA_TURU, ARAMA_KRITERI)
+    ENDIF
+
+    # --- 6. Sonuç Kontrolü ---
+    IF (SONUC ≠ null) THEN
+        YAZ("📗 Kitap bulundu!")
+        YAZ("Başlık: " + SONUC.Baslik)
+        YAZ("Yazar: " + SONUC.Yazar)
+        YAZ("Yayın Yılı: " + SONUC.Yil)
+        YAZ("Raf No: " + SONUC.RafNo)
+        BULUNDU ← TRUE
+    ELSE
+        YAZ("❌ Aradığınız kitap bulunamadı.")
+    ENDIF
+
+    # --- 7. Ek Özellik: Benzer Kitapları Göster ---
+    IF (BULUNDU = TRUE) THEN
+        YAZ("Benzer kitaplar aranıyor...")
+        BENZERLER ← Benzer_Kitaplari_Bul(KITAPLAR, SONUC.Tur)
+        IF UZUNLUK(BENZERLER) > 0 THEN
+            FOR HER KITAP in BENZERLER DO
+                YAZ("→ " + KITAP.Baslik + " (" + KITAP.Yazar + ")")
+            ENDFOR
+        ELSE
+            YAZ("Benzer türde başka kitap bulunamadı.")
+        ENDIF
+    ENDIF
+
+    # --- 8. Kayıt Düzenleme (isteğe bağlı) ---
+    YAZ("Bir kayıt düzenlemek ister misiniz? (E/H)")
+    CEVAP ← Girdi_Al()
+    IF (CEVAP = "E") THEN
+        YAZ("Düzenlemek istediğiniz kitabın ISBN'ini girin:")
+        HEDEF_ISBN ← Girdi_Al()
+        DUZENLENECEK ← Dogrusal_Arama(KITAPLAR, "ISBN", HEDEF_ISBN)
+        IF DUZENLENECEK ≠ null THEN
+            YAZ("Yeni başlığı giriniz:")
+            DUZENLENECEK.Baslik ← Girdi_Al()
+            YAZ("Kayıt güncellendi!")
+        ELSE
+            YAZ("Girilen ISBN'e sahip kitap bulunamadı.")
+        ENDIF
+    ENDIF
+
+    # --- 9. Sistem Sonu ---
+    YAZ("📚 Arama oturumu sona erdi. İyi okumalar!")
+
+SON
+
