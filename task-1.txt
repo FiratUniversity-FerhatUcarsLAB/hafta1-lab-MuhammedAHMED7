@@ -1,4 +1,114 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250541604
+AD-SOYAD:Muhammed AHMED
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+ALGORITMA Favori_Oyunda_Yuksek_Skor_Alma
+
+    # --- 1. Başlangıç Değerleri ---
+    HEDEF_SKOR ← 100000
+    EN_YUKSEK_SKOR ← 0
+    DENEME_SAYISI ← 0
+    MAKS_DENEME ← 30
+    BASARI ← FALSE
+
+    # Oyuncu özellikleri ve parametreler
+    BECERI_SEVIYESI ← 50              # 0-100 arası ölçek
+    KONSANTRASYON ← 70
+    OYUN_STRATEJISI ← "Dengeli"
+    HATA_SAYISI ← 0
+
+    # --- 2. Hazırlık Aşaması ---
+    Oyun_Ayarlarini_Kontrol_Et()
+    Ekipmani_Hazirla()
+    Isinma_Yap()
+
+    # --- 3. Ana Oyun Döngüsü ---
+    WHILE (DENEME_SAYISI < MAKS_DENEME) AND (BASARI = FALSE) DO
+
+        DENEME_SAYISI ← DENEME_SAYISI + 1
+        YAZ("===== " + DENEME_SAYISI + ". Deneme Başlıyor =====")
+
+        # --- 4. Oyun Oynama Süreci ---
+        SKOR ← 0
+        HATA_SAYISI ← 0
+        OYUN_BASLADI ← TRUE
+
+        WHILE (OYUN_BASLADI = TRUE) DO
+            AKSIYON ← Secilen_Aksiyon()          # Oyuncu bir hamle yapar
+            SKOR ← SKOR + Puan_Hesapla(AKSIYON)
+            RISK ← Risk_Degerlendir(AKSIYON)
+            
+            # --- 5. Koşullu Durumlar ---
+            IF (RISK > 70) THEN
+                YAZ("⚠ Yüksek riskli hareket algılandı.")
+                IF (BECERI_SEVIYESI > 60) THEN
+                    YAZ("Oyuncu riskli hareketi başarıyla uyguladı!")
+                    SKOR ← SKOR + 500
+                ELSE
+                    YAZ("Risk başarısız oldu, puan kaybedildi!")
+                    SKOR ← SKOR - 300
+                    HATA_SAYISI ← HATA_SAYISI + 1
+                ENDIF
+            ENDIF
+
+            # Zaman bonusu kontrolü
+            IF (Zaman_Bonusu_Aktif()) THEN
+                SKOR ← SKOR + 200
+            ENDIF
+
+            # Hata limiti kontrolü
+            IF (HATA_SAYISI >= 3) THEN
+                YAZ("Çok fazla hata! Oyun bitti.")
+                OYUN_BASLADI ← FALSE
+            ENDIF
+
+            # Skor hedefi kontrolü
+            IF (SKOR >= HEDEF_SKOR) THEN
+                YAZ("Tebrikler! Hedef skor aşıldı.")
+                BASARI ← TRUE
+                OYUN_BASLADI ← FALSE
+            ENDIF
+
+            # Oyunun doğal bitiş koşulu
+            IF (Oyun_Suresi_Bitti()) THEN
+                OYUN_BASLADI ← FALSE
+            ENDIF
+        ENDWHILE
+
+        # --- 6. Oyun Sonrası Analiz ---
+        YAZ("Deneme " + DENEME_SAYISI + " tamamlandı. Toplam skor: " + SKOR)
+
+        IF (SKOR > EN_YUKSEK_SKOR) THEN
+            EN_YUKSEK_SKOR ← SKOR
+            YAZ("🎉 Yeni en yüksek skor: " + EN_YUKSEK_SKOR)
+        ELSE
+            YAZ("Skor önceki en iyi skoru geçemedi.")
+        ENDIF
+
+        # --- 7. Performans Değerlendirmesi ---
+        IF (SKOR < HEDEF_SKOR) THEN
+            ZAYIF_NOKTA ← Hata_Analizi(HATA_SAYISI)
+            YAZ("Zayıf nokta: " + ZAYIF_NOKTA)
+            BECERI_SEVIYESI ← BECERI_SEVIYESI + 5
+            KONSANTRASYON ← KONSANTRASYON - 5
+            YAZ("Beceri seviyesi artırıldı: " + BECERI_SEVIYESI)
+        ENDIF
+
+        # --- 8. Dinlenme ve Tekrar Hazırlığı ---
+        Dinlenme_Yap()
+        IF (KONSANTRASYON < 50) THEN
+            YAZ("Düşük konsantrasyon, mola veriliyor.")
+            Mola_Ver(10)  # 10 dakika
+            KONSANTRASYON ← 80
+        ENDIF
+
+    ENDWHILE
+
+    # --- 9. Sonuç Değerlendirmesi ---
+    IF (BASARI = TRUE) THEN
+        YAZ("✅ Oyun başarıyla tamamlandı! Hedef skor aşıldı.")
+    ELSE
+        YAZ("❌ Maksimum deneme sayısına ulaşıldı. En yüksek skor: " + EN_YUKSEK_SKOR)
+    ENDIF
+
+SON
