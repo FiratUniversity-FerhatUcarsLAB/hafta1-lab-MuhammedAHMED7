@@ -1,4 +1,66 @@
-Öğrenci No:
-AD-SOYAD:
+Öğrenci No:250541604
+AD-SOYAD:Muhammed AHMED 
 
 Lütfen seçtiğiniz algoritmaya ait çözümü ve diğer isterleri aşağıya ekleyiniz:
+ALGORİTMA BüyükSayiCarpma(A, B)
+
+# Amaç: A ve B sayılarının çarpımını kağıt-kalem yöntemiyle bulmak.
+# Girdi: A, B → Pozitif tam sayı dizgileri (örnek: "123456", "789")
+# Çıktı: A × B sonucu bir dizgi olarak.
+
+BAŞLA
+    # 1. Geçersiz girdi kontrolü
+    EĞER (A veya B sayı değilse) İSE
+        YAZ "Hatalı girdi! Sadece rakam giriniz."
+        DUR
+    SON
+
+    # 2. Eğer herhangi biri sıfırsa sonuç 0’dır
+    EĞER (A == "0" VEYA B == "0") İSE
+        YAZ "Sonuç: 0"
+        DUR
+    SON
+
+    # 3. Sayıları rakam listesine çevir (ters çevrilmiş)
+    A_rakam ← []
+    B_rakam ← []
+    FOR i ← UZUNLUK(A)-1 DAN 0’A KADAR
+        A_rakam’E A[i]’nin tamsayı değerini EKLE
+    SON
+    FOR j ← UZUNLUK(B)-1 DAN 0’A KADAR
+        B_rakam’E B[j]’nin tamsayı değerini EKLE
+    SON
+
+    # 4. Sonuç dizisini oluştur (tüm basamaklar sıfır)
+    n ← UZUNLUK(A_rakam)
+    m ← UZUNLUK(B_rakam)
+    SONUC ← [0] * (n + m)  # maksimum basamak sayısı
+
+    # 5. Ana çarpma işlemi (uzun çarpma)
+    FOR i ← 0'DAN m-1’E KADAR        # B’nin her hanesi
+        TAŞI ← 0
+        FOR j ← 0'DAN n-1’E KADAR    # A’nın her hanesi
+            GEÇICI_TOPLAM ← SONUC[i + j] + (A_rakam[j] * B_rakam[i]) + TAŞI
+            SONUC[i + j] ← GEÇICI_TOPLAM MOD 10
+            TAŞI ← GEÇICI_TOPLAM DIV 10
+        SON
+        # son taşıyı bir üst basamağa ekle
+        SONUC[i + n] ← SONUC[i + n] + TAŞI
+    SON
+
+    # 6. Gereksiz baştaki sıfırları kaldır
+    i ← UZUNLUK(SONUC) - 1
+    WHILE i > 0 VE SONUC[i] = 0
+        i ← i - 1
+    SON
+
+    # 7. Sayıyı ters çevirip stringe dönüştür
+    SONUC_METİN ← ""
+    FOR k ← i'DEN 0’A KADAR
+        SONUC_METİN ← SONUC_METİN + STRING(SONUC[k])
+    SON
+
+    # 8. Sonucu yazdır
+    YAZ "Sonuç: " + SONUC_METİN
+BİTİR
+
